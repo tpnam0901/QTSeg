@@ -19,9 +19,7 @@ class Config(BaseConfig):
         self.scale_value = 255.0
         self.cvtColor = None
 
-        self.name = (
-            self.model_type + "_n" + "/" + self.encoder_model + self.decoder_model
-        )
+        self.name = self.model_type + "/" + self.encoder_model + self.decoder_model
 
         for key, value in kwargs.items():
             setattr(self, key, value)
