@@ -200,10 +200,12 @@ cd src && python infer.py -cfg working/checkpoint/QTSeg/20241120-223413/cfg.json
 - Some results:
 <p align="center">
     <img src="./assets/complexity.png" width="400"/>
-    <img src="./assets/isic_viz.png" width="800"/>
+    <img src="./assets/iou_flops.png" width="400"/>
 </p>
 <p align="center">
-    <img src="./assets/iou_flops.png" width="400"/>
+<img src="./assets/isic_viz.png" width="800"/>
+</p>
+<p align="center">
     <img src="./assets/busi_viz.png" width="400"/>
     <img src="./assets/bkai_viz.png" width="400"/>
 </p>
