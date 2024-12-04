@@ -14,7 +14,7 @@ class Config(BaseConfig):
         # fold_0, fold_1, fold_2, fold_3, fold_4
         self.data_fold = "fold_0"
         self.data_root: str = f"working/dataset/BUSI/folds/{self.data_fold}"
-        self.dataloader: str = "BUSI"
+        self.dataloader: str = "BUSIA"
         self.valid_type: str = "val"
         self.scale_value = 255.0
         self.cvtColor = None
