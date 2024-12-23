@@ -25,6 +25,11 @@ from data.dataloader import build_dataloader
 from configs.base import Config, import_config
 from networks import models, losses, metrics, optimizers, schedulers
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(message)s",
+)
+
 
 def main(cfg: Config, val_prefetch: bool):
     # ----------------- Setup -----------------
@@ -144,6 +149,7 @@ def main(cfg: Config, val_prefetch: bool):
             mlflow.log_param(key, value)
         epoch = 0
         while epoch < cfg.epochs:
+            epoch += 1
             if epoch < cfg.transfer_epochs:
                 if cfg.encoder_pretrained:
                     model.freeze_encoder()
@@ -167,7 +173,7 @@ def main(cfg: Config, val_prefetch: bool):
                 )
 
             total_loss_train = []
-            logger.info("Train epoch {}/{}".format(epoch + 1, cfg.epochs))
+            logger.info("Train epoch {}/{}".format(epoch, cfg.epochs))
 
             metric.reset()
             model.train()
@@ -209,7 +215,7 @@ def main(cfg: Config, val_prefetch: bool):
                         mlflow.log_metric("loss", loss.item(), step=global_train_step)
 
                     postfix = "Epoch {}/{} - loss: {:.4f}".format(
-                        epoch + 1, cfg.epochs, loss.item()
+                        epoch, cfg.epochs, loss.item()
                     )
 
                     for key, value in metric_dict.items():
@@ -236,7 +242,7 @@ def main(cfg: Config, val_prefetch: bool):
                         torch.save(checkpoint, weight_last_path)
 
             log_info = "Epoch {}/{} - epoch_loss: {:.4f}".format(
-                epoch + 1,
+                epoch,
                 cfg.epochs,
                 np.mean(total_loss_train).item(),
             )
@@ -257,7 +263,7 @@ def main(cfg: Config, val_prefetch: bool):
             mlflow.log_metric(
                 "learning_rate",
                 optimizer.param_groups[0]["lr"],
-                step=epoch + 1,
+                step=epoch,
             )
 
             checkpoint = {
@@ -273,8 +279,8 @@ def main(cfg: Config, val_prefetch: bool):
             torch.save(checkpoint, weight_last_path)
 
             # ----------------- Validation -----------------
-            if (epoch + 1) % cfg.val_epoch_freq == 0:
-                logger.info("Validation epoch {}/{}".format(epoch + 1, cfg.epochs))
+            if epoch % cfg.val_epoch_freq == 0:
+                logger.info("Validation epoch {}/{}".format(epoch, cfg.epochs))
                 total_loss_val = []
                 model.eval()
                 metric.reset()
@@ -359,7 +365,7 @@ def main(cfg: Config, val_prefetch: bool):
                         log_metric_dict[key] = value
 
                 log_info = "Epoch {}/{} - val_loss: {:.4f}".format(
-                    epoch + 1, cfg.epochs, total_loss_val
+                    epoch, cfg.epochs, total_loss_val
                 )
                 for key, value in metric_dict.items():
                     log_info += " - {}: {:.4f}".format(key, value)
@@ -402,8 +408,6 @@ def main(cfg: Config, val_prefetch: bool):
                                 cfg.checkpoint_dir, "weight_best_{}.pt".format(key)
                             ),
                         )
-            # Update epoch
-            epoch += cfg.val_epoch_freq
 
     log_info = "Best validation |"
     for key, value in best_values.items():
