@@ -76,12 +76,12 @@ conda env create -f environment.yml
 
 #### Preprocessing dataset
 ##### Skin lesion segmentation (ISIC)
-- Dataset used in this project is [ISIC2016](https://challenge.isic-archive.com/data/) but it still support 2017 and 2018 versions.
+- Dataset used in this project is [ISIC2016](https://challenge.isic-archive.com/data/) versions.
 
 - After downloading the dataset, you need to extract it and put it in the data folder. Please rename the folder containing input data to inputs and the folder containing label data to targets. The folder structure should be as follows:
 ```
 # Note: do not change the filename of the images
-- working/dataset/ISIC201* # or any path you want
+- working/dataset/ISIC2016 # or any path you want
     - train
         - inputs # refer to the input images
             - *.jpg
@@ -95,7 +95,7 @@ conda env create -f environment.yml
 ```
 
 ##### Breast Ultrasound Images Dataset (BUSI)
-- Dataset used in this project is [BUSI](https://scholar.cu.edu.eg/?q=afahmy/pages/dataset).
+- Dataset used in this project is [BUSI](https://scholar.cu.edu.eg/?q=afahmy/pages/dataset) - [link_backup](https://www.kaggle.com/datasets/aryashah2k/breast-ultrasound-images-dataset).
 
 - After downloading the dataset, you need to extract the dataset and put it in the data folder. The folder structure should be as follows:
 ```
@@ -119,7 +119,7 @@ cd src/tools && python busi_02_split_folds.py --data_root ../working/dataset/BUS
 - The dataset is sorted by the names of the images before splitting. The samples are chosen by slicing the array with a size of the number of samples in each fold. So, the same fold index will have the same samples in different runs. After the process, the dataset will be split into 5 folds and saved in the `working/dataset/BUSI/folds` folder as used in the paper.
 
 ##### BKAI-IGH NeoPolyp-Small
-- Dataset used in this project is [BKAI-IGH NeoPolyp-Small](https://scholar.cu.edu.eg/?q=afahmy/pages/dataset).
+- Dataset used in this project is [BKAI-IGH NeoPolyp-Small](https://github.com/GivralNguyen/BKAI-IGH-Neopolyp-Segmentation).
 
 - After downloading the dataset, you need to extract the dataset and put it in the data folder. The folder structure should be as follows:
 ```
