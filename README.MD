@@ -16,7 +16,7 @@
 [![python](https://img.shields.io/badge/-Python_3.8.16-blue?logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![pytorch](https://img.shields.io/badge/Torch_2.0.1-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/get-started/locally/)
 [![cuda](https://img.shields.io/badge/-CUDA_11.8-green?logo=nvidia&logoColor=white)](https://developer.nvidia.com/cuda-toolkit-archive)
-[![colab](https://img.shields.io/badge/-Colab-orange?logo=googlecolab&logoColor=white)](#)
+[![colab](https://img.shields.io/badge/-Colab-orange?logo=googlecolab&logoColor=white)](https://colab.research.google.com/github/tpnam0901/QTSeg/blob/dev/QTSeg.ipynb)
 [![arxiv](https://img.shields.io/badge/-arxiv-red?logo=arxiv&logoColor=white)](#)
 
 </div>
