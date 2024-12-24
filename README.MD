@@ -17,7 +17,7 @@
 [![pytorch](https://img.shields.io/badge/Torch_2.0.1-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/get-started/locally/)
 [![cuda](https://img.shields.io/badge/-CUDA_11.8-green?logo=nvidia&logoColor=white)](https://developer.nvidia.com/cuda-toolkit-archive)
 [![colab](https://img.shields.io/badge/-Colab-orange?logo=googlecolab&logoColor=white)](https://colab.research.google.com/github/tpnam0901/QTSeg/blob/dev/QTSeg.ipynb)
-[![arxiv](https://img.shields.io/badge/-arxiv-red?logo=arxiv&logoColor=white)](#)
+[![arxiv](https://img.shields.io/badge/-arxiv-red?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2412.17241)
 
 </div>
 
@@ -212,7 +212,15 @@ cd src && python infer.py -cfg working/checkpoint/QTSeg/20241120-223413/cfg.json
 
 ## Citation
 ```bibtex
-
+@misc{tran2024qtsegquerytokenbasedarchitecture,
+      title={QTSeg: A Query Token-Based Architecture for Efficient 2D Medical Image Segmentation}, 
+      author={Phuong-Nam Tran and Nhat Truong Pham and Duc Ngoc Minh Dang and Eui-Nam Huh and Choong Seon Hong},
+      year={2024},
+      eprint={2412.17241},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2412.17241}, 
+}
 ```
 ## References
 
