@@ -147,7 +147,7 @@ cd src/tools && python bkai_02_split_folds.py --data_root ../working/dataset/BKA
 
 #### Configuration & Training
 
-- Before starting training, you need to download pre-trained models from [fpn-nano.pth](https://github.com/tpnam0901/QTSeg/releases/download/v0.1.0/fpn-nano.pth) and put them in the `src/networks/pretrained` folder. In case the link is broken, you can download the pre-trained models from the assets in the [release page](https://github.com/tpnam0901/QTSeg/releases/tag/v0.1.0). The structure of your folder should be as follows:
+- Before starting training, you need to download pre-trained models from [fpn-nano.pth](https://github.com/tpnam0901/QTSeg/releases/download/v0.2.0/fpn-nano.pth) and put them in the `src/networks/pretrained` folder. In case the link is broken, you can download the pre-trained models from the assets in the [release page](https://github.com/tpnam0901/QTSeg/releases). The structure of your folder should be as follows:
 ```bash
 src
 ├── networks
