@@ -4,7 +4,7 @@
   <br>
 </h1>
 
-<h4 align="center">Official code repository for paper "QTSeg: Query Tokens Hybrid Architecture for Efficient 2D Medical Image Segmentation".</h4>
+<h4 align="center">Official code repository for paper "QTSeg: A Query Token-Based Architecture for Efficient 2D Medical Image Segmentation".</h4>
 
 <p align="center">
 <a href=""><img src="https://img.shields.io/github/stars/tpnam0901/QTSeg?" alt="stars"></a>
