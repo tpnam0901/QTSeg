@@ -69,12 +69,9 @@ class AugDataset(BaseDataset):
         y,
         img_size: Tuple[int, int] = (512, 512),
         num_classes: int = 2,
-        scale_value=255.0,
         cvtColor=None,
     ):
-        super(AugDataset, self).__init__(
-            X, y, img_size, num_classes, scale_value, cvtColor
-        )
+        super(AugDataset, self).__init__(X, y, img_size, num_classes, cvtColor)
         self.img_aug = iaa.SomeOf(
             (0, 4),
             [
