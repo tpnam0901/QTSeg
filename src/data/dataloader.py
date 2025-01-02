@@ -17,6 +17,16 @@ from .BKAI import (
     build_aug_dataloader as _build_BKAI_aug,
 )
 
+from .KvasirSEG import (
+    build_dataloader as _build_KvasirSeg,
+    build_aug_dataloader as _build_KvasirSeg_aug,
+)
+
+from .DSB2018 import (
+    build_dataloader as _build_DSB2018,
+    build_aug_dataloader as _build_DSB2018_aug,
+)
+
 
 def build_dataloader(
     cfg: Config,
@@ -35,6 +45,10 @@ def build_dataloader(
         "BUSIA": _build_BUSI_aug,
         "BKAI": _build_BKAI,
         "BKAIA": _build_BKAI_aug,
+        "KvasirSEG": _build_KvasirSeg,
+        "KvasirSEGA": _build_KvasirSeg_aug,
+        "DSB2018": _build_DSB2018,
+        "DSB2018A": _build_DSB2018_aug,
     }
 
     if mode != "train":
@@ -45,6 +59,8 @@ def build_dataloader(
                 "ISIC2018A": _build_ISIC,
                 "BUSIA": _build_BUSI,
                 "BKAIA": _build_BKAI,
+                "KvasirSEGA": _build_KvasirSeg,
+                "DSB2018A": _build_DSB2018,
             }
         )
 
