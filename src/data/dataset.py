@@ -16,7 +16,6 @@ class BaseDataset(Dataset):
         y,
         img_size: Tuple[int, int] = (512, 512),
         num_classes: int = 2,
-        scale_value: float = 255.0,
         cvtColor=None,
     ):
         super(BaseDataset, self).__init__()
@@ -25,7 +24,6 @@ class BaseDataset(Dataset):
         self.img_size = img_size
         self.num_classes = num_classes
         self.img_aug = None
-        self.scale_value = scale_value
         self.cvtColor = cvtColor
 
     def repeat(self, n: int):
@@ -49,7 +47,7 @@ class BaseDataset(Dataset):
 
         x, y = self.augment_seg(x, y)
         # Standardization
-        x = preprocess(x, scale_value=self.scale_value)
+        x = preprocess(x)
         assert len(y.shape) == 2
         return (
             torch.from_numpy(x),
