@@ -59,15 +59,14 @@ def pad_to_square(array: np.ndarray, value: int = 0) -> np.ndarray:
     h, w = array.shape[:2]
     if h == w:
         return array
-    if h > w:
-        pad = (h - w) // 2
-        return np.pad(
-            array, ((0, 0), (pad, h - w - pad)), mode="constant", constant_values=value
-        )
-    pad = (w - h) // 2
-    return np.pad(
-        array, ((pad, w - h - pad), (0, 0)), mode="constant", constant_values=value
-    )
+    largest_side = max([h, w])
+    size = list(array.shape)
+    size[0] = largest_side
+    size[1] = largest_side
+    pad_img = np.zeros(size, dtype=array.dtype)
+    pad_img.fill(value)
+    pad_img[:h, :w] = array
+    return pad_img
 
 
 def resize_mask(mask: np.ndarray, size: Tuple[int, int]) -> np.ndarray:

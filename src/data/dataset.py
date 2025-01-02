@@ -49,6 +49,7 @@ class BaseDataset(Dataset):
                 y = y[:, :, 0]
 
         x = pad_to_square(x)
+        x_raw_rgb = pad_to_square(x_raw_rgb)
         y = pad_to_square(y)
 
         x, y = self.augment_seg(x, y)
