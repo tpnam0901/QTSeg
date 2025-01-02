@@ -4,8 +4,14 @@ import logging
 from configs.base import Config
 from glob import glob
 from .dataset import BaseDataset, AugDataset
-from .utils import get_dataloader
-from .utils import load_img, preprocess, resize_mask, resize
+from .utils import (
+    get_dataloader,
+    load_img,
+    preprocess,
+    resize_mask,
+    resize_longest_side,
+    pad_to_square,
+)
 from typing import Tuple
 import cv2
 import numpy as np
@@ -17,18 +23,23 @@ class DSB2018Dataset(BaseDataset):
         self, index: int
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         x = load_img(self.X[index])
-        x_raw_rgb = x = resize(x, self.img_size, interpolation=cv2.INTER_AREA)
+        y = load_img(self.y[index]).astype(np.int64)
         if x.shape[2] == 4:
             x = cv2.cvtColor(x, cv2.COLOR_RGBA2RGB)
 
+        x_raw_rgb = x = resize_longest_side(
+            x, self.img_size, interpolation=cv2.INTER_AREA
+        )
         if self.cvtColor is not None:
             x = cv2.cvtColor(x, self.cvtColor)
-        y = load_img(self.y[index]).astype(np.int64)
         y = resize_mask(y, (x.shape[1], x.shape[0]))
         if np.max(y) > 1 and self.num_classes <= 2:
             y = y / np.max(y)
             if len(y.shape) == 3:
                 y = y[:, :, 0]
+
+        x = pad_to_square(x)
+        y = pad_to_square(y)
 
         x, y = self.augment_seg(x, y)
         # Standardization
@@ -85,7 +96,7 @@ def _build_dataloader(
         dataset = DSB2018AugDataset(
             sample_paths,
             target_paths,
-            cfg.image_size,
+            cfg.img_size,
             cfg.num_classes,
             cvtColor=cfg.cvtColor,
         )
@@ -93,7 +104,7 @@ def _build_dataloader(
         dataset = DSB2018Dataset(
             sample_paths,
             target_paths,
-            cfg.image_size,
+            cfg.img_size,
             cfg.num_classes,
             cvtColor=cfg.cvtColor,
         )

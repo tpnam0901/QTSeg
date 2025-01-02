@@ -4,7 +4,7 @@ import numpy as np
 from typing import Tuple
 from torch.utils.data import Dataset
 
-from .utils import load_img, preprocess, resize_mask, resize
+from .utils import load_img, preprocess, resize_mask, resize_longest_side, pad_to_square
 import imgaug as ia
 import imgaug.augmenters as iaa
 
@@ -14,7 +14,7 @@ class BaseDataset(Dataset):
         self,
         X,
         y,
-        img_size: Tuple[int, int] = (512, 512),
+        img_size: int = 512,
         num_classes: int = 2,
         cvtColor=None,
     ):
@@ -35,15 +35,21 @@ class BaseDataset(Dataset):
         self, index: int
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         x = load_img(self.X[index])
-        x_raw_rgb = x = resize(x, self.img_size, interpolation=cv2.INTER_AREA)
+        y = load_img(self.y[index]).astype(np.int64)
+
+        x_raw_rgb = x = resize_longest_side(
+            x, self.img_size, interpolation=cv2.INTER_AREA
+        )
         if self.cvtColor is not None:
             x = cv2.cvtColor(x, self.cvtColor)
-        y = load_img(self.y[index]).astype(np.int64)
         y = resize_mask(y, (x.shape[1], x.shape[0]))
         if np.max(y) > 1 and self.num_classes <= 2:
             y = y / np.max(y)
             if len(y.shape) == 3:
                 y = y[:, :, 0]
+
+        x = pad_to_square(x)
+        y = pad_to_square(y)
 
         x, y = self.augment_seg(x, y)
         # Standardization
@@ -67,7 +73,7 @@ class AugDataset(BaseDataset):
         self,
         X,
         y,
-        img_size: Tuple[int, int] = (512, 512),
+        img_size: 512,
         num_classes: int = 2,
         cvtColor=None,
     ):

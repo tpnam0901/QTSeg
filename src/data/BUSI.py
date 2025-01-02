@@ -52,7 +52,7 @@ def _build_dataloader(
         dataset = AugDataset(
             sample_paths,
             target_paths,
-            cfg.image_size,
+            cfg.img_size,
             cfg.num_classes,
             cvtColor=cfg.cvtColor,
         )
@@ -60,7 +60,7 @@ def _build_dataloader(
         dataset = BaseDataset(
             sample_paths,
             target_paths,
-            cfg.image_size,
+            cfg.img_size,
             cfg.num_classes,
             cvtColor=cfg.cvtColor,
         )

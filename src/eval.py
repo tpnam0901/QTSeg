@@ -45,7 +45,7 @@ def main(cfg: Config, ckpt: str = None):
     model.eval()
     metric.reset()
 
-    inputs = torch.randn(1, cfg.image_channel, *cfg.image_size).to(device)
+    inputs = torch.randn(1, cfg.image_channel, cfg.img_size, cfg.img_size).to(device)
     flops = FlopCountAnalysis(model, (inputs,)).total()
     acts = ActivationCountAnalysis(model, (inputs,)).total()
     total_flops = (flops + acts) / 1e9

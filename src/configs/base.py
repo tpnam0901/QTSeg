@@ -113,10 +113,10 @@ class Config(BaseConfig):
         # --------------------------------- Model settings
         self.model_type: str = "QTSeg"
         self.model_pretrained: str = ""
-        self.image_size: Tuple[int, int] = (512, 512)
+        self.img_size: int = 512
         self.image_embedding_size: Tuple[int, int] = (
-            self.image_size[0] // 16,
-            self.image_size[1] // 16,
+            self.img_size // 16,
+            self.img_size // 16,
         )
 
         # ----------------- Encoder settings

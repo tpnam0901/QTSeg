@@ -8,7 +8,7 @@ import numpy as np
 from tqdm.auto import tqdm
 from configs.base import Config
 from networks import models
-from data.utils import load_img, preprocess, resize
+from data.utils import load_img, preprocess, resize_longest_side, pad_to_square
 
 
 logging.basicConfig(
@@ -46,10 +46,11 @@ def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = None):
 
         for path in tqdm(input_paths):
             x = load_img(path)
-            x = resize(x, cfg.image_size, interpolation=cv2.INTER_AREA)
+            x = resize_longest_side(x, cfg.img_size, interpolation=cv2.INTER_AREA)
+            x = pad_to_square(x)
             if cfg.cvtColor is not None:
                 x = cv2.cvtColor(x, cfg.cvtColor)
-            x = preprocess(x, scale_value=cfg.scale_value)
+            x = preprocess(x)
             x = torch.from_numpy(x).to(device).unsqueeze(0)
 
             with torch.no_grad():

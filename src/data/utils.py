@@ -42,6 +42,34 @@ def resize(
     return cv2.resize(array, size, interpolation=interpolation)
 
 
+def resize_longest_side(
+    array: np.ndarray, target_size: int, interpolation=cv2.INTER_AREA
+) -> np.ndarray:
+    h, w = array.shape[:2]
+    if h > w:
+        new_h = target_size
+        new_w = int(w * target_size / h)
+    else:
+        new_w = target_size
+        new_h = int(h * target_size / w)
+    return resize(array, (new_w, new_h), interpolation=interpolation)
+
+
+def pad_to_square(array: np.ndarray, value: int = 0) -> np.ndarray:
+    h, w = array.shape[:2]
+    if h == w:
+        return array
+    if h > w:
+        pad = (h - w) // 2
+        return np.pad(
+            array, ((0, 0), (pad, h - w - pad)), mode="constant", constant_values=value
+        )
+    pad = (w - h) // 2
+    return np.pad(
+        array, ((pad, w - h - pad), (0, 0)), mode="constant", constant_values=value
+    )
+
+
 def resize_mask(mask: np.ndarray, size: Tuple[int, int]) -> np.ndarray:
     return resize(mask, size, interpolation=cv2.INTER_NEAREST)
 
