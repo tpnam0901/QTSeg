@@ -3,7 +3,7 @@ import logging
 
 from configs.base import Config
 from glob import glob
-from .dataset import BaseDataset, AugDataset
+from .dataset import BaseDataset, AugDataset, TestDataset
 from .utils import get_dataloader
 
 
@@ -26,6 +26,7 @@ def _build_dataloader(
     logger=logging.getLogger(),
     batch_size: int = -1,
     aug: bool = False,
+    test: bool = False,
 ):
     load_fn = {
         "KvasirSEG": _load_KvasirSEG,
@@ -43,22 +44,16 @@ def _build_dataloader(
     )
 
     batch_size = cfg.batch_size if batch_size < 1 else batch_size
-    if aug:
-        dataset = AugDataset(
-            sample_paths,
-            target_paths,
-            cfg.img_size,
-            cfg.num_classes,
-            cvtColor=cfg.cvtColor,
-        )
-    else:
-        dataset = BaseDataset(
-            sample_paths,
-            target_paths,
-            cfg.img_size,
-            cfg.num_classes,
-            cvtColor=cfg.cvtColor,
-        )
+    dataset_fn = AugDataset if aug else BaseDataset
+    if test:
+        dataset_fn = TestDataset
+    dataset = dataset_fn(
+        sample_paths,
+        target_paths,
+        cfg.img_size,
+        cfg.num_classes,
+        cvtColor=cfg.cvtColor,
+    )
 
     dataloader = get_dataloader(
         dataset, cfg.val_epoch_freq, cfg.num_workers, mode, batch_size
@@ -83,3 +78,12 @@ def build_aug_dataloader(
     batch_size: int = -1,
 ):
     return _build_dataloader(cfg, mode, logger, batch_size, True)
+
+
+def build_test_dataloader(
+    cfg: Config,
+    mode: str,
+    logger=logging.getLogger(),
+    batch_size: int = -1,
+):
+    return _build_dataloader(cfg, mode, logger, batch_size, test=True)

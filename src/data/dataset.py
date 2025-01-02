@@ -69,12 +69,39 @@ class BaseDataset(Dataset):
         return img, seg
 
 
+class TestDataset(BaseDataset):
+    def __getitem__(
+        self, index: int
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        x_raw_rgb = x = load_img(self.X[index])
+        y = load_img(self.y[index]).astype(np.int64)
+
+        x = resize_longest_side(x, self.img_size, interpolation=cv2.INTER_AREA)
+        if self.cvtColor is not None:
+            x = cv2.cvtColor(x, self.cvtColor)
+
+        if np.max(y) > 1 and self.num_classes <= 2:
+            y = y / np.max(y)
+            if len(y.shape) == 3:
+                y = y[:, :, 0]
+
+        x = pad_to_square(x)
+
+        x = preprocess(x)
+        assert len(y.shape) == 2
+        return (
+            torch.from_numpy(x),
+            torch.from_numpy(y.astype(np.int64)),
+            torch.from_numpy(x_raw_rgb.astype(np.float32)),
+        )
+
+
 class AugDataset(BaseDataset):
     def __init__(
         self,
         X,
         y,
-        img_size: 512,
+        img_size: int = 512,
         num_classes: int = 2,
         cvtColor=None,
     ):
