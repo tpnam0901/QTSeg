@@ -16,7 +16,6 @@ class Config(BaseConfig):
         self.data_root: str = f"working/dataset/BUSI/folds/{self.data_fold}"
         self.dataloader: str = "BUSIA"
         self.valid_type: str = "val"
-        self.scale_value = 255.0
         self.cvtColor = None
 
         self.name = self.model_type + "/" + self.encoder_model + self.decoder_model

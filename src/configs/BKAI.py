@@ -31,7 +31,6 @@ class Config(BaseConfig):
 
         self.dataloader: str = "BKAIA"
         self.valid_type: str = "val"
-        self.scale_value = 255.0
         self.cvtColor = None
 
         self.name = (
