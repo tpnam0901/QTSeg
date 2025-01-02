@@ -23,7 +23,7 @@ class MultiQueryMaskDecoder(nn.Module):
             upscaling masks
         """
         super().__init__()
-        self.num_mask_tokens = cfg.num_masks
+        self.num_mask_tokens = cfg.num_classes
         self.mask_tokens = nn.Embedding(
             self.num_mask_tokens, cfg.encoder_out_features[-1]
         )

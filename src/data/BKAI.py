@@ -50,7 +50,7 @@ def _build_dataloader(
             sample_paths,
             target_paths,
             cfg.image_size,
-            cfg.num_masks,
+            cfg.num_classes,
             cvtColor=cfg.cvtColor,
         )
     else:
@@ -58,7 +58,7 @@ def _build_dataloader(
             sample_paths,
             target_paths,
             cfg.image_size,
-            cfg.num_masks,
+            cfg.num_classes,
             cvtColor=cfg.cvtColor,
         )
 

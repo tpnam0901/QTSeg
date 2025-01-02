@@ -12,8 +12,8 @@ class Config(BaseConfig):
     def add_args(self, **kwargs):
 
         # fold_0, fold_1, fold_2, fold_3, fold_4
-        self.num_masks = 2  # 2 or 3
-        self.mask_type = "multiclass" if self.num_masks > 2 else "binary"
+        self.num_classes = 2  # 2 or 3
+        self.mask_type = "multiclass" if self.num_classes > 2 else "binary"
 
         self.data_fold = "fold_0"
         self.data_root: str = (

@@ -66,7 +66,7 @@ def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = None):
                 prediction = prediction.astype(np.uint8)
             else:
                 prediction = np.argmax(prediction, axis=0).astype(np.float32)
-                prediction *= 255.0 / (cfg.num_masks - 1)
+                prediction *= 255.0 / (cfg.num_classes - 1)
                 prediction = prediction.astype(np.uint8)
             name = os.path.basename(path).split(".")[0]
             weight_name = os.path.basename(weight_path).split(".")[0]

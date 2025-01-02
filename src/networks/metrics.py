@@ -125,8 +125,8 @@ class Binary(nn.Module):
 class MultiBinary(nn.Module):
     def __init__(self, cfg: Config):
         super(MultiBinary, self).__init__()
-        self.num_masks = cfg.num_masks
-        for i in range(1, cfg.num_masks):
+        self.num_masks = cfg.num_classes
+        for i in range(1, cfg.num_classes):
             setattr(self, f"metric_{i}", Binary(cfg))
 
     def forward(self, pred, gt):

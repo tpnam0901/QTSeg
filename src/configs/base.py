@@ -130,7 +130,7 @@ class Config(BaseConfig):
         self.bridge_model: str = "MLFF"
 
         # ----------------- Decoder settings
-        self.num_masks: int = 2  # Num classes
+        self.num_classes: int = 2  # Num classes
         self.decoder_model: str = "MultiQueryMaskDecoder"
         self.decoder_pretrained: str = ""
         self.mask_depths: List[int] = [1, 2, 3]
