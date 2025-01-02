@@ -6,7 +6,7 @@ import logging
 
 from time import time_ns
 from tqdm.auto import tqdm
-from data.dataloader import build_dataloader
+from data.dataloader import build_test_dataloader
 from configs.base import Config
 from networks import models, metrics
 from fvcore.nn import FlopCountAnalysis, ActivationCountAnalysis
@@ -18,19 +18,18 @@ logging.basicConfig(
 )
 
 
-def main(cfg: Config, ckpt: str = None):
+def main(cfg: Config, ckpt: str = ""):
     cfg.num_workers = 0
     weight_paths = glob.glob(os.path.join(cfg.checkpoint_dir, "*.pt"))
-    if ckpt is not None:
+    if ckpt:
         weight_paths = [ckpt]
     # Build dataloader
     logging.info("Building dataset...")
 
-    test_dataloader = build_dataloader(
+    test_dataloader = build_test_dataloader(
         cfg,
         mode=cfg.valid_type,
         logger=logging.getLogger("Eval"),
-        batch_size=1,
     )
 
     logging.info("Building model...")

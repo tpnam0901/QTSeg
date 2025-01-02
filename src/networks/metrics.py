@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import torch.nn as nn
+from data.utils import resize_longest_side, resize_mask
 from torch.nn import functional as F
 from configs.base import Config
 
@@ -33,6 +34,19 @@ class Binary(nn.Module):
         else:
             pred_binary = (pred > 0.5).float().to(self.device)
             pred_binary_inverse = 1 - pred_binary
+
+        if pred_binary.shape[0] != gt.shape[0] or pred_binary.shape[1] != gt.shape[1]:
+            # Inverse the preprocessing
+            target_size = pred_binary.shape[0]
+            # Find the padding size
+            new_size = resize_longest_side(gt, target_size).shape
+            h, w = new_size
+            # Remove padding
+            pred_binary = pred_binary[:h, :w]
+            pred_binary_inverse = pred_binary_inverse[:h, :w]
+            # Resize to the ground truth
+            pred_binary = resize_mask(pred_binary, gt.shape)
+            pred_binary_inverse = resize_mask(pred_binary_inverse, gt.shape)
 
         gt_binary = gt.float().to(self.device)
         gt_binary_inverse = (gt_binary == 0).float().to(self.device)

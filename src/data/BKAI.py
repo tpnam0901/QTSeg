@@ -86,6 +86,5 @@ def build_test_dataloader(
     cfg: Config,
     mode: str,
     logger=logging.getLogger(),
-    batch_size: int = -1,
 ):
-    return _build_dataloader(cfg, mode, logger, batch_size, test=True)
+    return _build_dataloader(cfg, mode, logger, 1, test=True)
