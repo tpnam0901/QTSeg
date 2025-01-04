@@ -52,7 +52,8 @@ class BaseDataset(Dataset):
         x_raw_rgb = pad_to_square(x_raw_rgb)
         y = pad_to_square(y)
 
-        x, y = self.augment_seg(x, y)
+        if getattr(self, "augment_seg", None) is not None:
+            x, y = self.augment_seg(x, y)
         # Standardization
         x = preprocess(x)
         assert len(y.shape) == 2
@@ -64,9 +65,6 @@ class BaseDataset(Dataset):
 
     def __len__(self):
         return len(self.X)
-
-    def augment_seg(self, img, seg):
-        return img, seg
 
 
 class TestDataset(BaseDataset):
