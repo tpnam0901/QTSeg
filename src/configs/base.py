@@ -131,9 +131,9 @@ class Config(BaseConfig):
 
         # ----------------- Decoder settings
         self.num_classes: int = 2  # Num classes
-        self.decoder_model: str = "MultiQueryMaskDecoder"
+        self.decoder_model: str = "MaskDecoder"
         self.decoder_pretrained: str = ""
-        self.mask_depths: List[int] = [1, 2, 3]
+        self.mask_depths: List[int] = [3, 2, 2]
         self.mask_num_head: int = 8
         self.mask_mlp_dim: int = 2048
 
@@ -142,7 +142,7 @@ class Config(BaseConfig):
         self.metric = "Binary"
         # BCELoss, FocalLoss, CrossEntropyLoss, BinaryDiceLoss, CategoricalDiceLoss
         self.loss_type: List[str] = ["CrossEntropyLoss", "BinaryDiceLoss"]
-        self.loss_weight: List[float] = [1.0, 1.0]
+        self.loss_weight: List[float] = [0.3, 0.7]
 
         self.focal_alpha: float = 0.25
         self.focal_gamma: float = 2
