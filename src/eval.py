@@ -6,7 +6,7 @@ import logging
 
 from time import time_ns
 from tqdm.auto import tqdm
-from data.dataloader import build_test_dataloader
+from data.dataloader import build_test_dataloader, build_dataloader
 from configs.base import Config
 from networks import models, metrics
 from fvcore.nn import FlopCountAnalysis, ActivationCountAnalysis
@@ -18,15 +18,19 @@ logging.basicConfig(
 )
 
 
-def main(cfg: Config, ckpt: str = ""):
+def main(cfg: Config, ckpt: str = "", ori_res: bool = False):
+    # Change the batch size to 1
     cfg.num_workers = 0
+    cfg.batch_size = 1
+
     weight_paths = glob.glob(os.path.join(cfg.checkpoint_dir, "*.pt"))
     if ckpt:
         weight_paths = [ckpt]
     # Build dataloader
     logging.info("Building dataset...")
 
-    test_dataloader = build_test_dataloader(
+    dataloader_fn = build_test_dataloader if ori_res else build_dataloader
+    test_dataloader = dataloader_fn(
         cfg,
         mode=cfg.valid_type,
         logger=logging.getLogger("Eval"),
@@ -120,6 +124,11 @@ def arg_parser():
         help="Whether to change the metric",
     )
     parser.add_argument(
+        "--ori_res",
+        action="store_true",
+        help="Whether to evaluate the original resolution",
+    )
+    parser.add_argument(
         "--ckpt",
         type=str,
         default=None,
@@ -137,4 +146,4 @@ if __name__ == "__main__":
 
     if args.valid_type:
         cfg.valid_type = args.valid_type
-    main(cfg, args.ckpt)
+    main(cfg, args.ckpt, args.ori_res)
