@@ -45,8 +45,8 @@ class BaseDataset(Dataset):
         y = resize_mask(y, (x.shape[1], x.shape[0]))
         if np.max(y) > 1 and self.num_classes <= 2:
             y = y / np.max(y)
-            if len(y.shape) == 3:
-                y = y[:, :, 0]
+        if len(y.shape) == 3:
+            y = y[:, :, 0]
 
         x = pad_to_square(x)
         x_raw_rgb = pad_to_square(x_raw_rgb)
