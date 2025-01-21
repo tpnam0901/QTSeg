@@ -9,7 +9,6 @@ class FPNEncoder(nn.Module):
         super().__init__()
         n = cfg.n_channel
 
-        # YOLO modules
         self.conv_0 = Conv(cfg.image_channel, n, 3, 2)
         self.conv_1 = Conv(n, n * 2, 3, 2)
         self.c2f_2 = C2f(n * 2, n * 2, 1, True)
