@@ -36,6 +36,12 @@ class Binary(nn.Module):
             pred_binary_inverse = 1 - pred_binary
 
         if pred_binary.shape[0] != gt.shape[0] or pred_binary.shape[1] != gt.shape[1]:
+            # Convert to numpy
+            gt = gt.detach().cpu().numpy().astype(np.uint8)
+            pred_binary = pred_binary.detach().cpu().numpy().astype(np.uint8)
+            pred_binary_inverse = (
+                pred_binary_inverse.detach().cpu().numpy().astype(np.uint8)
+            )
             # Inverse the preprocessing
             target_size = pred_binary.shape[0]
             # Find the padding size
@@ -45,8 +51,15 @@ class Binary(nn.Module):
             pred_binary = pred_binary[:h, :w]
             pred_binary_inverse = pred_binary_inverse[:h, :w]
             # Resize to the ground truth
-            pred_binary = resize_mask(pred_binary, gt.shape)
-            pred_binary_inverse = resize_mask(pred_binary_inverse, gt.shape)
+            gt_h, gt_w = gt.shape
+            pred_binary = resize_mask(pred_binary, (gt_w, gt_h))
+            pred_binary_inverse = resize_mask(pred_binary_inverse, (gt_w, gt_h))
+            # Convert to Tensor
+            gt = torch.from_numpy(gt).float().to(self.device)
+            pred_binary = torch.from_numpy(pred_binary).float().to(self.device)
+            pred_binary_inverse = (
+                torch.from_numpy(pred_binary_inverse).float().to(self.device)
+            )
 
         gt_binary = gt.float().to(self.device)
         gt_binary_inverse = (gt_binary == 0).float().to(self.device)
