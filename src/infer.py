@@ -17,12 +17,12 @@ logging.basicConfig(
 )
 
 
-def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = None):
+def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = ""):
 
     os.makedirs(output_dir, exist_ok=True)
     logging.info("Building model...")
     weight_paths = glob.glob(os.path.join(cfg.checkpoint_dir, "*.pt"))
-    if ckpt is not None:
+    if ckpt:
         weight_paths = [ckpt]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -100,7 +100,7 @@ def arg_parser():
     parser.add_argument(
         "--ckpt",
         type=str,
-        default=None,
+        default="",
         help="Device to run inference",
     )
     return parser.parse_args()
