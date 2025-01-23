@@ -76,13 +76,14 @@ class Config(BaseConfig):
         self.betas: Tuple[float, float] = (0.9, 0.999)
         self.eps: float = 1e-08
         self.amsgard: bool = False
+        self.nesterov: bool = True
 
         # --------------------------------- Scheduler settings
-        # StepLR, MultiStepLR, ExponentialLR, CosineAnnealingLR, ReduceLROnPlateau, CosineAnnealingWarmRestarts, IdentityScheduler
+        # StepLR, MultiStepLR, ExponentialLR, CosineAnnealingLR, ReduceLROnPlateau, CosineAnnealingWarmRestarts, IdentityScheduler, PolyLR
         self.scheduler: str = "StepLR"
         self.learning_rate: float = 0.001
         self.learning_rate_min: float = 0.00001
-        self.weight_decay: float = 0.0001
+        self.weight_decay: float = 3e-05
         self.scheduler_last_epoch: int = -1
         # StepLR
         self.lr_step_size: int = 50
@@ -133,7 +134,7 @@ class Config(BaseConfig):
         self.num_classes: int = 2  # Num classes
         self.decoder_model: str = "MaskDecoder"
         self.decoder_pretrained: str = ""
-        self.mask_depths: List[int] = [3, 2, 2]
+        self.mask_depths: List[int] = [1, 2, 3]
         self.mask_num_head: int = 8
         self.mask_mlp_dim: int = 2048
 
@@ -142,7 +143,7 @@ class Config(BaseConfig):
         self.metric = "Binary"
         # BCELoss, FocalLoss, CrossEntropyLoss, BinaryDiceLoss, CategoricalDiceLoss
         self.loss_type: List[str] = ["CrossEntropyLoss", "BinaryDiceLoss"]
-        self.loss_weight: List[float] = [0.3, 0.7]
+        self.loss_weight: List[float] = [1.0, 1.0]
 
         self.focal_alpha: float = 0.25
         self.focal_gamma: float = 2

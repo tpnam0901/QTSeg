@@ -7,18 +7,21 @@ from .dataset import BaseDataset, AugDataset, TestDataset
 from .utils import get_dataloader
 
 
-def _load_ISIC(root_path, mode, prefix="_segmentation.png"):
-    target_paths = glob(os.path.join(root_path, mode, "targets/*.png"))
-    sample_paths = []
-    for path in target_paths:
-        path = path.replace("targets", "inputs")
-        path = path.replace(prefix, ".jpg")
-        sample_paths.append(path)
+def _load_FIVES(root_path, mode):
+    sample_paths = glob(os.path.join(root_path, mode, "inputs", "*.png"))
+    target_paths = []
+    for path in sample_paths:
+        filename = os.path.basename(path)
+        path = os.path.join(root_path, mode, "targets", filename)
+        target_paths.append(path)
 
-    for path, t_path in zip(sample_paths, target_paths):
-        assert os.path.exists(path), "File not found: {} for the target {}".format(
-            path, t_path
-        )
+    for path, t_path in zip(target_paths.copy(), sample_paths.copy()):
+        if not os.path.exists(path):
+            target_paths.remove(path)
+            sample_paths.remove(t_path)
+
+    assert len(sample_paths) == len(target_paths)
+    assert len(sample_paths) > 0 and len(target_paths) > 0
     return sample_paths, target_paths
 
 
@@ -31,24 +34,10 @@ def _build_dataloader(
     test: bool = False,
 ):
     load_fn = {
-        "ISIC2016": _load_ISIC,
-        "ISIC2016A": _load_ISIC,
-        "ISIC2017": _load_ISIC,
-        "ISIC2017A": _load_ISIC,
-        "ISIC2018": _load_ISIC,
-        "ISIC2018A": _load_ISIC,
+        "FIVES": _load_FIVES,
+        "FIVESA": _load_FIVES,
     }
-    prefixes = {
-        "ISIC2016": "_Segmentation.png",
-        "ISIC2016A": "_Segmentation.png",
-        "ISIC2017": "_segmentation.png",
-        "ISIC2017A": "_segmentation.png",
-        "ISIC2018": "_segmentation.png",
-        "ISIC2018A": "_segmentation.png",
-    }
-    sample_paths, target_paths = load_fn[cfg.dataloader](
-        cfg.data_root, mode, prefixes[cfg.dataloader]
-    )
+    sample_paths, target_paths = load_fn[cfg.dataloader](cfg.data_root, mode)
     assert len(sample_paths) > 0, "No samples found in {}".format(
         os.path.join(cfg.data_root, mode, "targets")
     )
@@ -70,6 +59,7 @@ def _build_dataloader(
         cfg.num_classes,
         cvtColor=cfg.cvtColor,
     )
+
     dataloader = get_dataloader(
         dataset, cfg.val_epoch_freq, cfg.num_workers, mode, batch_size
     )
@@ -83,7 +73,7 @@ def build_dataloader(
     logger=logging.getLogger(),
     batch_size: int = -1,
 ):
-    return _build_dataloader(cfg, mode, logger, batch_size, aug=False)
+    return _build_dataloader(cfg, mode, logger, batch_size, False)
 
 
 def build_aug_dataloader(
@@ -92,7 +82,7 @@ def build_aug_dataloader(
     logger=logging.getLogger(),
     batch_size: int = -1,
 ):
-    return _build_dataloader(cfg, mode, logger, batch_size, aug=True)
+    return _build_dataloader(cfg, mode, logger, batch_size, True)
 
 
 def build_test_dataloader(

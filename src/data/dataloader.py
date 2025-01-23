@@ -32,6 +32,12 @@ from .DSB2018 import (
     build_aug_dataloader as _build_DSB2018_aug,
 )
 
+from .FIVES import (
+    build_dataloader as _build_FIVES,
+    build_test_dataloader as _build_FIVES_test,
+    build_aug_dataloader as _build_FIVES_aug,
+)
+
 
 def build_dataloader(
     cfg: Config,
@@ -54,6 +60,8 @@ def build_dataloader(
         "KvasirSEGA": _build_KvasirSeg_aug,
         "DSB2018": _build_DSB2018,
         "DSB2018A": _build_DSB2018_aug,
+        "FIVES": _build_FIVES,
+        "FIVESA": _build_FIVES_aug,
     }
 
     if mode != "train":
@@ -66,6 +74,7 @@ def build_dataloader(
                 "BKAIA": _build_BKAI,
                 "KvasirSEGA": _build_KvasirSeg,
                 "DSB2018A": _build_DSB2018,
+                "FIVESA": _build_FIVES,
             }
         )
 
@@ -76,6 +85,7 @@ def build_test_dataloader(
     cfg: Config,
     mode: str,
     logger=logging.getLogger(),
+    batch_size: int = -1,
 ):
     build_fn = {
         "ISIC2016": _build_ISIC_test,
@@ -85,7 +95,8 @@ def build_test_dataloader(
         "BKAI": _build_BKAI_test,
         "KvasirSEG": _build_KvasirSeg_test,
         "DSB2018": _build_DSB2018_test,
+        "FIVES": _build_FIVES_test,
     }
     if cfg.dataloader not in list(build_fn.keys()):
         cfg.dataloader = cfg.dataloader[:-1]
-    return build_fn[cfg.dataloader](cfg, mode, logger)
+    return build_fn[cfg.dataloader](cfg, mode, batch_size, logger)

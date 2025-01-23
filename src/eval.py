@@ -34,6 +34,7 @@ def main(cfg: Config, ckpt: str = "", ori_res: bool = False):
         cfg,
         mode=cfg.valid_type,
         logger=logging.getLogger("Eval"),
+        batch_size=1,
     )
 
     logging.info("Building model...")
