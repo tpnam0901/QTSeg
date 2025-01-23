@@ -20,6 +20,7 @@ def sgd(train_params, cfg: Config):
         lr=cfg.learning_rate,
         momentum=cfg.momentum,
         weight_decay=cfg.weight_decay,
+        nesterov=cfg.nesterov,
     )
     return optimizer
 
