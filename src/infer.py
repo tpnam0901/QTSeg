@@ -47,6 +47,7 @@ def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = ""):
         for path in tqdm(input_paths):
             x = load_img(path)
             x = resize_longest_side(x, cfg.img_size, interpolation=cv2.INTER_AREA)
+            h, w = x.shape[:2]
             x = pad_to_square(x)
             if cfg.cvtColor is not None:
                 x = cv2.cvtColor(x, cfg.cvtColor)
@@ -71,6 +72,8 @@ def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = ""):
                 prediction = prediction.astype(np.uint8)
             name = os.path.basename(path).split(".")[0]
             weight_name = os.path.basename(weight_path).split(".")[0]
+            # Crop back to original size
+            prediction = prediction[:h, :w]
             cv2.imwrite(
                 os.path.join(output_dir, name + weight_name + ".png"), prediction
             )
