@@ -47,7 +47,7 @@ def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = ""):
         for path in tqdm(input_paths):
             x = load_img(path)
             x = resize_longest_side(x, cfg.img_size, interpolation=cv2.INTER_AREA)
-            if len(x.shape) == 4:
+            if x.shape[2] == 4:
                 x = cv2.cvtColor(x, cv2.COLOR_RGBA2RGB)
             h, w = x.shape[:2]
             x = pad_to_square(x)
