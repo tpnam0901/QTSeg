@@ -42,7 +42,8 @@ class DSB2018Dataset(BaseDataset):
         x_raw_rgb = pad_to_square(x_raw_rgb)
         y = pad_to_square(y)
 
-        x, y = self.augment_seg(x, y)
+        if getattr(self, "augment_seg", None) is not None:
+            x, y = self.augment_seg(x, y)
         # Standardization
         x = preprocess(x)
         assert len(y.shape) == 2
@@ -72,7 +73,6 @@ class DSB2018TestDataset(BaseDataset):
 
         x = pad_to_square(x)
 
-        x, y = self.augment_seg(x, y)
         # Standardization
         x = preprocess(x)
         assert len(y.shape) == 2
