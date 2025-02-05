@@ -161,6 +161,9 @@ class Config(BaseConfig):
         # Only used in BKAI for determining the location of the mask
         self.mask_type: str = ""
 
+        # This SEED will be replaced at runtime and saved in the checkpoint
+        self.SEED: int = 42
+
         self.name = self.model_type + "/" + self.encoder_model + self.decoder_model
         for key, value in kwargs.items():
             setattr(self, key, value)

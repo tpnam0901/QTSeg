@@ -8,7 +8,7 @@ import random
 import numpy as np
 import torch
 
-SEED = 1996
+SEED = np.random.randint(np.iinfo(np.int32).min, np.iinfo(np.int32).max)
 random.seed(SEED)
 np.random.seed(SEED)
 torch.manual_seed(SEED)
@@ -444,7 +444,7 @@ def arg_parser():
 if __name__ == "__main__":
     args = arg_parser()
     cfg: Config = import_config(args.config)
-
+    cfg.SEED = SEED
     level = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(
         level=level,
