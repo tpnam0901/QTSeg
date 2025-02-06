@@ -128,7 +128,7 @@ class Config(BaseConfig):
         self.n_channel: int = 16
 
         # ----------------- Bridge settings
-        self.bridge_model: str = "MLFF"
+        self.bridge_model: str = "MLFD"
 
         # ----------------- Decoder settings
         self.num_classes: int = 2  # Num classes
