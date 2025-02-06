@@ -8,7 +8,7 @@ import random
 import numpy as np
 import torch
 
-SEED = np.random.randint(np.iinfo(np.int32).min, np.iinfo(np.int32).max)
+SEED = np.random.randint(0, 2**32 - 1)
 random.seed(SEED)
 np.random.seed(SEED)
 torch.manual_seed(SEED)
