@@ -258,6 +258,22 @@ cd src && python infer.py -cfg working/checkpoint/QTSeg/20241120-223413/cfg.json
 cd src && python infer.py -cfg working/checkpoint/QTSeg/20241120-223413/cfg.json --ckpt working/checkpoint/QTSeg/20241120-223413/weight_best_iou.pt --input_dir path/to/input_dir --output_dir path/to/output_dir
 ```
 
+- We also provide pre-trained models for ISIC and FIVES datasets. you can download the pre-trained models from the assets in the [release page](https://github.com/tpnam0901/QTSeg/releases) and put them in the `src/working/checkpoints` folder. The structure of your folder should be as follows:
+```bash
+src
+├── working
+    ├── checkpoints
+        ├── ISIC
+            ├── mlruns
+            ├── QTSeg
+                ├── FPNEncoderMaskDecoder
+                    20250122-160324
+                        ├── cfg.json
+                        ├── *.pt
+        ├── FIVES
+        ...
+```
+
 - Some results:
 <p align="center">
     <img src="./assets/performance.png"/>
