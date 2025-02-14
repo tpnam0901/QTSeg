@@ -33,8 +33,8 @@
   <img src="./assets/architecture.png"/>
 </p>
 <p align="center">
-    <img src="./assets/DMAD.png" width="300"/>
-    <img src="./assets/FigIoUFLOPs.png" width="630"/>
+    <img src="./assets/DMAD.png" width="200"/>
+    <img src="./assets/FigIoUFLOPs.png" width="420"/>
 </p>
 
 ## How To Use
