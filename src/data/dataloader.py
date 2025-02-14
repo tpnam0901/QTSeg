@@ -20,12 +20,6 @@ from .BKAI import (
     build_aug_dataloader as _build_BKAI_aug,
 )
 
-from .KvasirSEG import (
-    build_dataloader as _build_KvasirSeg,
-    build_test_dataloader as _build_KvasirSeg_test,
-    build_aug_dataloader as _build_KvasirSeg_aug,
-)
-
 from .DSB2018 import (
     build_dataloader as _build_DSB2018,
     build_test_dataloader as _build_DSB2018_test,

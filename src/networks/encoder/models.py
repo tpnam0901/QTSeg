@@ -5,7 +5,6 @@ from configs.base import Config
 
 class FPNEncoder(nn.Module):
     def __init__(self, cfg: Config):
-        "FPN Encoder architecture base on YOLOv8 backbone"
         super().__init__()
         n = cfg.n_channel
 
