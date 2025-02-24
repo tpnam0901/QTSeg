@@ -291,10 +291,10 @@ src
 
 ## Citation
 ```bibtex
-@misc{tran2024qtsegquerytokenbasedarchitecture,
-      title={QTSeg: A Query Token-Based Architecture for Efficient 2D Medical Image Segmentation}, 
+@misc{tran2025qtsegquerytokenbaseddualmix,
+      title={QTSeg: A Query Token-Based Dual-Mix Attention Framework with Multi-Level Feature Distribution for Medical Image Segmentation}, 
       author={Phuong-Nam Tran and Nhat Truong Pham and Duc Ngoc Minh Dang and Eui-Nam Huh and Choong Seon Hong},
-      year={2024},
+      year={2025},
       eprint={2412.17241},
       archivePrefix={arXiv},
       primaryClass={cs.CV},
