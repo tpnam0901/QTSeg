@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/tpnam0901/QTSeg/compare/v0.3.0...v0.3.1) (2025-02-24)
+
+
+### Bug Fixes
+
+* reference title ([bf8b127](https://github.com/tpnam0901/QTSeg/commit/bf8b12734d09f65a03110a1ecca850a3cd022f70))
+
 ## [0.3.0](https://github.com/tpnam0901/QTSeg/compare/v0.2.0...v0.3.0) (2025-02-24)
 
 
