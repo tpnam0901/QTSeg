@@ -1,7 +1,6 @@
 # Changelog
 
-## [0.2.0](https://github.com/tpnam0901/QTSeg/compare/v0.1.0...v0.2.0) (2025-02-24)
-
+## [0.2.0](https://github.com/tpnam0901/QTSeg/compare/v0.1.0...v0.2.0) (2024-12-24)
 
 ### Features
 
