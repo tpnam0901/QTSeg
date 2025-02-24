@@ -13,8 +13,8 @@ class Config(BaseConfig):
 
         # fold_0, fold_1, fold_2, fold_3, fold_4
         self.data_fold = "fold_0"
-        self.data_root: str = f"working/dataset/BUSI/folds/{self.data_fold}"
-        self.dataloader: str = "BUSIA"
+        self.data_root: str = f"working/dataset/DSB2018/folds/{self.data_fold}"
+        self.dataloader: str = "DSB2018A"
         self.valid_type: str = "val"
         self.cvtColor = None
 

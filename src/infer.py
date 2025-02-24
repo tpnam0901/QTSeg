@@ -8,7 +8,7 @@ import numpy as np
 from tqdm.auto import tqdm
 from configs.base import Config
 from networks import models
-from data.utils import load_img, preprocess, resize
+from data.utils import load_img, preprocess, resize_longest_side, pad_to_square
 
 
 logging.basicConfig(
@@ -17,12 +17,12 @@ logging.basicConfig(
 )
 
 
-def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = None):
+def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = ""):
 
     os.makedirs(output_dir, exist_ok=True)
     logging.info("Building model...")
     weight_paths = glob.glob(os.path.join(cfg.checkpoint_dir, "*.pt"))
-    if ckpt is not None:
+    if ckpt:
         weight_paths = [ckpt]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -46,10 +46,14 @@ def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = None):
 
         for path in tqdm(input_paths):
             x = load_img(path)
-            x = resize(x, cfg.image_size, interpolation=cv2.INTER_AREA)
+            x = resize_longest_side(x, cfg.img_size, interpolation=cv2.INTER_AREA)
+            if x.shape[2] == 4:
+                x = cv2.cvtColor(x, cv2.COLOR_RGBA2RGB)
+            h, w = x.shape[:2]
+            x = pad_to_square(x)
             if cfg.cvtColor is not None:
                 x = cv2.cvtColor(x, cfg.cvtColor)
-            x = preprocess(x, scale_value=cfg.scale_value)
+            x = preprocess(x)
             x = torch.from_numpy(x).to(device).unsqueeze(0)
 
             with torch.no_grad():
@@ -66,10 +70,12 @@ def main(cfg: Config, input_dir: str, output_dir: str, ckpt: str = None):
                 prediction = prediction.astype(np.uint8)
             else:
                 prediction = np.argmax(prediction, axis=0).astype(np.float32)
-                prediction *= 255.0 / (cfg.num_masks - 1)
+                prediction *= 255.0 / (cfg.num_classes - 1)
                 prediction = prediction.astype(np.uint8)
             name = os.path.basename(path).split(".")[0]
             weight_name = os.path.basename(weight_path).split(".")[0]
+            # Crop back to original size
+            prediction = prediction[:h, :w]
             cv2.imwrite(
                 os.path.join(output_dir, name + weight_name + ".png"), prediction
             )
@@ -99,7 +105,7 @@ def arg_parser():
     parser.add_argument(
         "--ckpt",
         type=str,
-        default=None,
+        default="",
         help="Device to run inference",
     )
     return parser.parse_args()

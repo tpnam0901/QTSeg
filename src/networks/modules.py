@@ -56,3 +56,11 @@ class MLFF(nn.Module):
         )
 
         return high_level_features, mid_level_features, low_level_features
+
+
+class MLFD(MLFF):
+    """
+    Rename MLFF to MLFD
+    """
+
+    pass

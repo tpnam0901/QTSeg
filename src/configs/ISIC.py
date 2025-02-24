@@ -16,7 +16,6 @@ class Config(BaseConfig):
         self.data_root = "working/dataset/ISIC2016"
         self.dataloader = "ISIC2016A"
         self.valid_type = "test"  # test for ISIC2016, val for ISIC2017, ISIC2018
-        self.scale_value = 255.0
         self.cvtColor = cv2.COLOR_RGB2YCrCb
 
         self.name = self.model_type + "/" + self.encoder_model + self.decoder_model

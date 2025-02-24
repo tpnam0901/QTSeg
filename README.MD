@@ -4,7 +4,7 @@
   <br>
 </h1>
 
-<h4 align="center">Official code repository for paper "QTSeg: A Query Token-Based Architecture for Efficient 2D Medical Image Segmentation".</h4>
+<h4 align="center">Official code repository for paper "QTSeg: A Query Token-Based Dual-Mix Attention Framework with Multi-Level Feature Distribution for Medical Image Segmentation".</h4>
 
 <p align="center">
 <a href=""><img src="https://img.shields.io/github/stars/tpnam0901/QTSeg?" alt="stars"></a>
@@ -22,7 +22,6 @@
 </div>
 
 <p align="center">
-  <a href="#abstract">Abstract</a> •
   <a href="#how-to-use">How To Use</a> •
   <a href="#download">Download</a> •
   <a href="#license">License</a> •
@@ -30,11 +29,12 @@
   <a href="#references">References</a> •
 </p>
 
-## Abstract
-> Medical image segmentation is crucial in assisting medical doctors in making diagnoses and enabling accurate automatic diagnosis. While advanced convolutional neural networks (CNNs) excel in segmenting regions of interest with pixel-level precision, they often struggle with long-range dependencies, which is crucial for enhancing model performance. Conversely, transformer architectures leverage attention mechanisms to excel in handling long-range dependencies. However, the computational complexity of transformers grows quadratically, posing resource-intensive challenges, especially with high-resolution medical images. Recent research aims to combine CNN and transformer architectures to mitigate their drawbacks and enhance performance while keeping resource demands low. Nevertheless, existing approaches have not fully leveraged the strengths of both architectures to achieve high accuracy with low computational requirements. To address this gap, we propose a novel architecture for 2D medical image segmentation (QTSeg) that leverages a feature pyramid network (FPN) as the image encoder, a multi-level feature fusion (MLFF) as the adaptive module between encoder and decoder and a multi-query mask decoder (MQM Decoder) as the mask decoder. In the first step, an FPN model extracts pyramid features from the input image. Next, MLFF is incorporated between the encoder and decoder to adapt features from different encoder stages to the decoder. Finally, an MQM Decoder is employed to improve mask generation by integrating query tokens with pyramid features at all stages of the mask decoder. Our experimental results show that QTSeg outperforms state-of-the-art methods across all metrics with lower computational demands than the baseline and the existing methods.
-
 <p align="center">
   <img src="./assets/architecture.png"/>
+</p>
+<p align="center">
+    <img src="./assets/DMAD.png" width="200"/>
+    <img src="./assets/FigIoUFLOPs.png" width="420"/>
 </p>
 
 ## How To Use
@@ -87,7 +87,7 @@ conda env create -f environment.yml
             - *.jpg
         - targets # refer to the mask images
             - *.png
-    - val
+    - test
         - inputs
             - *.jpg
         - targets
@@ -143,11 +143,62 @@ cd src/tools && python bkai_01_preprocess_mask.py --data_root ../working/dataset
 # this will create 2 new folders named folds_binary and folds_multiclass in the dataset folder
 cd src/tools && python bkai_02_split_folds.py --data_root ../working/dataset/BKAI/
 ```
-- The dataset is sorted by the names of the images before splitting. The samples are chosen by slicing the array with a size of the number of samples in each fold. So, the same fold index will have the same samples in different runs. After the process, the dataset will be split into 5 folds and saved in the `working/dataset/BUSI/folds` folder as used in the paper.
+- After the process, the dataset will be split into 5 folds and saved in the `working/dataset/BKAI/folds` folder as used in the paper.
+
+##### Cell segmentation
+- Dataset used in this project is [DSB2018](https://www.kaggle.com/c/data-science-bowl-2018).
+
+- After downloading the dataset, you need to extract the dataset and put it in the data folder. The folder structure should be as follows:
+```
+# Note: do not change the filename of the images
+- working/dataset/DSB2018 # or any path you want
+    - stage1_train
+        - 0acd... # folder name
+            - images
+                - *.png
+            - masks
+                - *.png
+        - 0b1e... # folder name
+            - images
+                - *.png
+            - masks
+                - *.png
+        ...
+```
+- First, before splitting the dataset into 5 folds, we need to merge any sample that has more than 1 label file. This can be done by running the following command:
+```bash
+# this will create 2 new folders named train_gt_binary and train_gt_multiclass in train_gt/train_gt folder
+cd src/tools && python dsb2018_01_combine_mask.py --data_root ../working/dataset/DSB2018/
+```
+- Then, we can split the dataset into 5 folds by running the following command:
+```bash
+# this will create 2 new folders named folds_binary and folds_multiclass in the dataset folder
+cd src/tools && python dsb2018_02_split_folds.py --data_root ../working/dataset/DSB2018/
+```
+- After the process, the dataset will be split into 5 folds and saved in the `working/dataset/DSB2018/folds` folder as used in the paper.
+
+##### Retinal Vessel Segmentation
+- Dataset used in this project is [FIVES](https://figshare.com/articles/figure/FIVES_A_Fundus_Image_Dataset_for_AI-based_Vessel_Segmentation/19688169/1).
+
+- After downloading the dataset, you need to extract it and put it in the data folder. Please rename the folder containing input data to inputs and the folder containing label data to targets. The folder structure should be as follows:
+```
+# Note: do not change the filename of the images
+- working/dataset/ISIC2016 # or any path you want
+    - train
+        - inputs # refer to the Original
+            - *.png
+        - targets # refer to the Ground truth
+            - *.png
+    - test
+        - inputs
+            - *.png
+        - targets
+            - *.png
+```
 
 #### Configuration & Training
 
-- Before starting training, you need to download pre-trained models from [fpn-nano.pth](https://github.com/tpnam0901/QTSeg/releases/download/v0.1.0/fpn-nano.pth) and put them in the `src/networks/pretrained` folder. In case the link is broken, you can download the pre-trained models from the assets in the [release page](https://github.com/tpnam0901/QTSeg/releases/tag/v0.1.0). The structure of your folder should be as follows:
+- Before starting training, you need to download pre-trained models from [fpn-nano.pth](https://github.com/tpnam0901/QTSeg/releases/download/v0.2.0/fpn-nano.pth) and put them in the `src/networks/pretrained` folder. In case the link is broken, you can download the pre-trained models from the assets in the [release page](https://github.com/tpnam0901/QTSeg/releases). The structure of your folder should be as follows:
 ```bash
 src
 ├── networks
@@ -170,6 +221,16 @@ cd src && python train.py -cfg configs/BUSI.py
 - Train BKAI dataset
 ```bash
 cd src && python train.py -cfg configs/BKAI.py
+```
+
+- Train DSB2018 dataset
+```bash
+cd src && python train.py -cfg configs/DSB2018.py
+```
+
+- Train FIVES dataset
+```bash
+cd src && python train.py -cfg configs/FIVES.py
 ```
 
 - You can visualize the training process by running the following command:
@@ -197,17 +258,35 @@ cd src && python infer.py -cfg working/checkpoint/QTSeg/20241120-223413/cfg.json
 cd src && python infer.py -cfg working/checkpoint/QTSeg/20241120-223413/cfg.json --ckpt working/checkpoint/QTSeg/20241120-223413/weight_best_iou.pt --input_dir path/to/input_dir --output_dir path/to/output_dir
 ```
 
+- We also provide pre-trained models for ISIC and FIVES datasets. you can download the pre-trained models from the assets in the [release page](https://github.com/tpnam0901/QTSeg/releases/tag/assets) and put them in the `src/working/checkpoints` folder. The structure of your folder should be as follows:
+```bash
+src
+├── working
+    ├── checkpoints
+        ├── ISIC
+            ├── mlruns
+            ├── QTSeg
+                ├── FPNEncoderMaskDecoder
+                    20250122-160324
+                        ├── cfg.json
+                        ├── *.pt
+        ├── FIVES
+        ...
+```
+
 - Some results:
 <p align="center">
-    <img src="./assets/complexity.png" width="400"/>
-    <img src="./assets/iou_flops.png" width="400"/>
+    <img src="./assets/performance.png"/>
 </p>
 <p align="center">
 <img src="./assets/isic_viz.png" width="800"/>
 </p>
 <p align="center">
-    <img src="./assets/busi_viz.png" width="400"/>
     <img src="./assets/bkai_viz.png" width="400"/>
+    <img src="./assets/dsb2018_viz.png" width="400"/>
+</p>
+<p align="center">
+    <img src="./assets/fives_viz.png" width="800"/>
 </p>
 
 ## Citation

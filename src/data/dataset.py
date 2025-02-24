@@ -4,7 +4,7 @@ import numpy as np
 from typing import Tuple
 from torch.utils.data import Dataset
 
-from .utils import load_img, preprocess, resize_mask, resize
+from .utils import load_img, preprocess, resize_mask, resize_longest_side, pad_to_square
 import imgaug as ia
 import imgaug.augmenters as iaa
 
@@ -14,9 +14,8 @@ class BaseDataset(Dataset):
         self,
         X,
         y,
-        img_size: Tuple[int, int] = (512, 512),
+        img_size: int = 512,
         num_classes: int = 2,
-        scale_value: float = 255.0,
         cvtColor=None,
     ):
         super(BaseDataset, self).__init__()
@@ -25,7 +24,6 @@ class BaseDataset(Dataset):
         self.img_size = img_size
         self.num_classes = num_classes
         self.img_aug = None
-        self.scale_value = scale_value
         self.cvtColor = cvtColor
 
     def repeat(self, n: int):
@@ -37,19 +35,27 @@ class BaseDataset(Dataset):
         self, index: int
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         x = load_img(self.X[index])
-        x_raw_rgb = x = resize(x, self.img_size, interpolation=cv2.INTER_AREA)
+        y = load_img(self.y[index]).astype(np.int64)
+
+        x_raw_rgb = x = resize_longest_side(
+            x, self.img_size, interpolation=cv2.INTER_AREA
+        )
         if self.cvtColor is not None:
             x = cv2.cvtColor(x, self.cvtColor)
-        y = load_img(self.y[index]).astype(np.int64)
         y = resize_mask(y, (x.shape[1], x.shape[0]))
         if np.max(y) > 1 and self.num_classes <= 2:
             y = y / np.max(y)
-            if len(y.shape) == 3:
-                y = y[:, :, 0]
+        if len(y.shape) == 3:
+            y = y[:, :, 0]
 
-        x, y = self.augment_seg(x, y)
+        x = pad_to_square(x)
+        x_raw_rgb = pad_to_square(x_raw_rgb)
+        y = pad_to_square(y)
+
+        if getattr(self, "augment_seg", None) is not None:
+            x, y = self.augment_seg(x, y)
         # Standardization
-        x = preprocess(x, scale_value=self.scale_value)
+        x = preprocess(x)
         assert len(y.shape) == 2
         return (
             torch.from_numpy(x),
@@ -60,8 +66,32 @@ class BaseDataset(Dataset):
     def __len__(self):
         return len(self.X)
 
-    def augment_seg(self, img, seg):
-        return img, seg
+
+class TestDataset(BaseDataset):
+    def __getitem__(
+        self, index: int
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        x_raw_rgb = x = load_img(self.X[index])
+        y = load_img(self.y[index]).astype(np.int64)
+
+        x = resize_longest_side(x, self.img_size, interpolation=cv2.INTER_AREA)
+        if self.cvtColor is not None:
+            x = cv2.cvtColor(x, self.cvtColor)
+
+        if np.max(y) > 1 and self.num_classes <= 2:
+            y = y / np.max(y)
+            if len(y.shape) == 3:
+                y = y[:, :, 0]
+
+        x = pad_to_square(x)
+
+        x = preprocess(x)
+        assert len(y.shape) == 2
+        return (
+            torch.from_numpy(x),
+            torch.from_numpy(y.astype(np.int64)),
+            torch.from_numpy(x_raw_rgb.astype(np.float32)),
+        )
 
 
 class AugDataset(BaseDataset):
@@ -69,14 +99,11 @@ class AugDataset(BaseDataset):
         self,
         X,
         y,
-        img_size: Tuple[int, int] = (512, 512),
+        img_size: int = 512,
         num_classes: int = 2,
-        scale_value=255.0,
         cvtColor=None,
     ):
-        super(AugDataset, self).__init__(
-            X, y, img_size, num_classes, scale_value, cvtColor
-        )
+        super(AugDataset, self).__init__(X, y, img_size, num_classes, cvtColor)
         self.img_aug = iaa.SomeOf(
             (0, 4),
             [

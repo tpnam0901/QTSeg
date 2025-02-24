@@ -1,4 +1,3 @@
-import math
 import cv2
 import os
 import numpy as np
@@ -10,7 +9,6 @@ from torch.utils.data import DataLoader
 
 def preprocess(
     array: np.ndarray,
-    scale_value: float = 255.0,
 ) -> np.ndarray:
     """
     Convert HxWxC to CxHxW, scale to [0, 1], standardize, expand dims and convert to float32
@@ -23,37 +21,12 @@ def preprocess(
         array = np.expand_dims(array, axis=-1)
     # Convert HxWxC to CxHxW
     x = np.moveaxis(array, -1, 0)
-    # Scale to [0, 1]
-    if scale_value == -1:
-        x = (x - np.min(x)) / (np.max(x) - np.min(x))
-    else:
-        x = x / scale_value
+    # Min-max scaling
+    x = (x - np.min(x)) / (np.max(x) - np.min(x))
     # Convert to [-1, 1]
     x = x * 2 - 1
     # Convert to float32
     x = x.astype(np.float32)
-    return x
-
-
-def inverse_preprocess(
-    array: np.ndarray,
-) -> np.ndarray:
-    """
-    Convert CxHxW to HxWxC, convert to [0, 1], inverse standardize, scale and convert to uint8
-    Args:
-        array (np.ndarray): CxHxW numpy array to preprocess
-        scale_value (float): scale value to multiply the array. Usually 255.0 for 8-bit images, 4095.0 for 12-bit images and 65535.0 for 16-bit images
-    """
-    # Convert to float32
-    x = array.astype(np.float32)
-    # Convert to [0, 1]
-    x = (x + 1) / 2
-    # Scale to [0, 255]
-    x = x * 255
-    # Convert CxHxW to HxWxC
-    x = np.moveaxis(x, 0, -1)
-    # Convert to uint8
-    x = x.astype(np.uint8)
     return x
 
 
@@ -67,6 +40,33 @@ def resize(
     array: np.ndarray, size: Tuple[int, int], interpolation=cv2.INTER_AREA
 ) -> np.ndarray:
     return cv2.resize(array, size, interpolation=interpolation)
+
+
+def resize_longest_side(
+    array: np.ndarray, target_size: int, interpolation=cv2.INTER_AREA
+) -> np.ndarray:
+    h, w = array.shape[:2]
+    if h > w:
+        new_h = target_size
+        new_w = int(w * target_size / h)
+    else:
+        new_w = target_size
+        new_h = int(h * target_size / w)
+    return resize(array, (new_w, new_h), interpolation=interpolation)
+
+
+def pad_to_square(array: np.ndarray, value: int = 0) -> np.ndarray:
+    h, w = array.shape[:2]
+    if h == w:
+        return array
+    largest_side = max([h, w])
+    size = list(array.shape)
+    size[0] = largest_side
+    size[1] = largest_side
+    pad_img = np.zeros(size, dtype=array.dtype)
+    pad_img.fill(value)
+    pad_img[:h, :w] = array
+    return pad_img
 
 
 def resize_mask(mask: np.ndarray, size: Tuple[int, int]) -> np.ndarray:

@@ -72,3 +72,24 @@ class IdentityScheduler:
 
     def load_state_dict(self, state_dict):
         pass
+
+
+class PolyLR:
+    def __init__(self, optimizer, cfg: Config):
+        self.optimizer = optimizer
+        self.max_iter = cfg.epochs
+        self.init_lr = cfg.learning_rate
+        self.exponent = 0.9
+        self.current_iter = 0
+
+    def step(self):
+        lr = self.init_lr * (1 - self.current_iter / self.max_iter) ** self.exponent
+        for param_group in self.optimizer.param_groups:
+            param_group["lr"] = lr
+        self.current_iter += 1
+
+    def state_dict(self):
+        return {"current_iter": self.current_iter}
+
+    def load_state_dict(self, state_dict):
+        self.current_iter = state_dict["current_iter"]

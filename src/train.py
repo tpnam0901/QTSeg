@@ -8,7 +8,7 @@ import random
 import numpy as np
 import torch
 
-SEED = 1996
+SEED = np.random.randint(0, 2**32 - 1)
 random.seed(SEED)
 np.random.seed(SEED)
 torch.manual_seed(SEED)
@@ -134,7 +134,7 @@ def main(cfg: Config, val_prefetch: bool):
     global_train_step = 0
     global_val_step = 0
     num_steps = len(train_dataloader)
-    classes = [str(i) for i in range(cfg.num_masks)]
+    classes = [str(i) for i in range(cfg.num_classes)]
 
     if val_prefetch:
         logger.info("Prefetching validation data...")
@@ -310,7 +310,7 @@ def main(cfg: Config, val_prefetch: bool):
 
                     if index == random_viz:
                         # Log image to mlflow
-                        ax = plt.subplot(1, 2 + cfg.num_masks, 1)
+                        ax = plt.subplot(1, 2 + cfg.num_classes, 1)
 
                         image = inputs_raw[0].astype(np.uint8)
                         target = targets[0].astype(np.float32)
@@ -321,7 +321,7 @@ def main(cfg: Config, val_prefetch: bool):
                         labels = np.unique(target)
                         target *= 255 / np.max(labels)
                         target = target.astype(np.uint8)
-                        ax = plt.subplot(1, 2 + cfg.num_masks, 2)
+                        ax = plt.subplot(1, 2 + cfg.num_classes, 2)
                         ax.imshow(target, cmap="gray")
                         ax.axis("off")
                         ax.set_title("Target")
@@ -332,14 +332,14 @@ def main(cfg: Config, val_prefetch: bool):
                             prediction = (prediction > 0.5).astype(np.float32)
                             prediction *= 255.0 / np.max(labels)
                             prediction = prediction.astype(np.uint8)
-                            ax = plt.subplot(1, 2 + cfg.num_masks, 3)
+                            ax = plt.subplot(1, 2 + cfg.num_classes, 3)
                             ax.imshow(prediction, cmap="gray")
                             ax.axis("off")
                             ax.set_title("Prediction")
                         else:
                             prediction = np.argmax(prediction, axis=0).astype(np.uint8)
-                            for i in range(cfg.num_masks):
-                                ax = plt.subplot(1, 2 + cfg.num_masks, 3 + i)
+                            for i in range(cfg.num_classes):
+                                ax = plt.subplot(1, 2 + cfg.num_classes, 3 + i)
                                 mask = (prediction == i) * 255
                                 ax.imshow(mask, cmap="gray")
                                 ax.axis("off")
@@ -444,7 +444,7 @@ def arg_parser():
 if __name__ == "__main__":
     args = arg_parser()
     cfg: Config = import_config(args.config)
-
+    cfg.SEED = SEED
     level = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(
         level=level,

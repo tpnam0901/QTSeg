@@ -11,11 +11,18 @@ class Config(BaseConfig):
 
     def add_args(self, **kwargs):
 
-        # fold_0, fold_1, fold_2, fold_3, fold_4
-        self.data_fold = "fold_0"
-        self.data_root: str = f"working/dataset/BUSI/folds/{self.data_fold}"
-        self.dataloader: str = "BUSIA"
-        self.valid_type: str = "val"
+        self.batch_size = 4
+
+        self.optimizer: str = "sgd"
+        self.scheduler: str = "PolyLR"
+        self.learning_rate: float = 0.01
+        self.weight_decay: float = 3e-05
+        self.nesterov: bool = True
+
+        self.img_size: int = 1024
+        self.data_root: str = f"working/dataset/FIVES"
+        self.dataloader: str = "FIVESA"
+        self.valid_type: str = "test"
         self.cvtColor = None
 
         self.name = self.model_type + "/" + self.encoder_model + self.decoder_model

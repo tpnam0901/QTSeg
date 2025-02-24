@@ -76,13 +76,14 @@ class Config(BaseConfig):
         self.betas: Tuple[float, float] = (0.9, 0.999)
         self.eps: float = 1e-08
         self.amsgard: bool = False
+        self.nesterov: bool = True
 
         # --------------------------------- Scheduler settings
-        # StepLR, MultiStepLR, ExponentialLR, CosineAnnealingLR, ReduceLROnPlateau, CosineAnnealingWarmRestarts, IdentityScheduler
+        # StepLR, MultiStepLR, ExponentialLR, CosineAnnealingLR, ReduceLROnPlateau, CosineAnnealingWarmRestarts, IdentityScheduler, PolyLR
         self.scheduler: str = "StepLR"
         self.learning_rate: float = 0.001
         self.learning_rate_min: float = 0.00001
-        self.weight_decay: float = 0.0001
+        self.weight_decay: float = 3e-05
         self.scheduler_last_epoch: int = -1
         # StepLR
         self.lr_step_size: int = 50
@@ -113,10 +114,10 @@ class Config(BaseConfig):
         # --------------------------------- Model settings
         self.model_type: str = "QTSeg"
         self.model_pretrained: str = ""
-        self.image_size: Tuple[int, int] = (512, 512)
+        self.img_size: int = 512
         self.image_embedding_size: Tuple[int, int] = (
-            self.image_size[0] // 16,
-            self.image_size[1] // 16,
+            self.img_size // 16,
+            self.img_size // 16,
         )
 
         # ----------------- Encoder settings
@@ -127,11 +128,11 @@ class Config(BaseConfig):
         self.n_channel: int = 16
 
         # ----------------- Bridge settings
-        self.bridge_model: str = "MLFF"
+        self.bridge_model: str = "MLFD"
 
         # ----------------- Decoder settings
-        self.num_masks: int = 2  # Num classes
-        self.decoder_model: str = "MultiQueryMaskDecoder"
+        self.num_classes: int = 2  # Num classes
+        self.decoder_model: str = "MaskDecoder"
         self.decoder_pretrained: str = ""
         self.mask_depths: List[int] = [1, 2, 3]
         self.mask_num_head: int = 8
@@ -159,6 +160,9 @@ class Config(BaseConfig):
         self.num_workers: int = 8
         # Only used in BKAI for determining the location of the mask
         self.mask_type: str = ""
+
+        # This SEED will be replaced at runtime and saved in the checkpoint
+        self.SEED: int = 42
 
         self.name = self.model_type + "/" + self.encoder_model + self.decoder_model
         for key, value in kwargs.items():

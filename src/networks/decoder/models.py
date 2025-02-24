@@ -2,28 +2,15 @@ import torch
 import torch.nn as nn
 
 from typing import Tuple
-from .modules import MLP, LayerNorm2d, PositionEmbeddingRandom, Identity
-from .transformer import TwoWayTransformer
+from .modules import MLP, PositionEmbeddingRandom, DualMixAttentionBlock, LayerNorm2d
+
 from configs.base import Config
 
 
-class MultiQueryMaskDecoder(nn.Module):
+class MaskDecoder(nn.Module):
     def __init__(self, cfg: Config) -> None:
-        """
-        Modified from https://github.com/bowang-lab/MedSAM/blob/69b5185e75aaea8d175f164da67dad0442560521/segment_anything/modeling/mask_decoder.py
-        Predicts masks given an image and prompt embeddings, using a
-        transformer architecture.
-
-        Arguments:
-          transformer_dim (int): the channel dimension of the transformer
-          transformer (nn.Module): the transformer used to predict masks
-          num_multimask_outputs (int): the number of masks to predict
-            when disambiguating masks
-          activation (nn.Module): the type of activation to use when
-            upscaling masks
-        """
         super().__init__()
-        self.num_mask_tokens = cfg.num_masks
+        self.num_mask_tokens = cfg.num_classes
         self.mask_tokens = nn.Embedding(
             self.num_mask_tokens, cfg.encoder_out_features[-1]
         )
@@ -32,8 +19,8 @@ class MultiQueryMaskDecoder(nn.Module):
         for block_index in self.indices:
             setattr(
                 self,
-                f"transformer_s{block_index}",
-                TwoWayTransformer(
+                f"DMAB_s{block_index}",
+                DualMixAttentionBlock(
                     depth=cfg.mask_depths[block_index],
                     embedding_dim=cfg.encoder_out_features[block_index],
                     mlp_dim=cfg.mask_mlp_dim,
@@ -47,7 +34,7 @@ class MultiQueryMaskDecoder(nn.Module):
             )
             setattr(
                 self,
-                f"output_hypernetworks_mlps_s{block_index}",
+                f"MLP_s{block_index}",
                 nn.ModuleList(
                     [
                         MLP(
@@ -62,13 +49,13 @@ class MultiQueryMaskDecoder(nn.Module):
             )
             setattr(
                 self,
-                f"pe_layer_s{block_index}",
+                f"PE_s{block_index}",
                 PositionEmbeddingRandom(cfg.encoder_out_features[block_index] // 2),
             )
             if block_index > 0:
                 setattr(
                     self,
-                    f"output_upscaling_s{block_index}",
+                    f"SUB_s{block_index}",
                     nn.Sequential(
                         nn.ConvTranspose2d(
                             cfg.encoder_out_features[block_index],
@@ -83,7 +70,7 @@ class MultiQueryMaskDecoder(nn.Module):
             else:
                 setattr(
                     self,
-                    f"output_upscaling_s{block_index}",
+                    f"SUB_s{block_index}",
                     nn.Sequential(
                         nn.ConvTranspose2d(
                             cfg.encoder_out_features[block_index],
@@ -103,8 +90,6 @@ class MultiQueryMaskDecoder(nn.Module):
                         nn.GELU(),
                     ),
                 )
-
-        self.pixel_embed = Identity()
 
     def forward(
         self,
@@ -139,26 +124,23 @@ class MultiQueryMaskDecoder(nn.Module):
             b, c, h, w = current_feat.shape
 
             pos_src = torch.repeat_interleave(
-                getattr(self, f"pe_layer_s{block_index}")(feat.shape[2:])
-                .unsqueeze(0)
-                .cpu(),
+                getattr(self, f"PE_s{block_index}")(feat.shape[2:]).unsqueeze(0).cpu(),
                 query_tokens.shape[0],
                 dim=0,
             ).to(current_feat.device)
 
-            att_tokens, current_feat = getattr(self, f"transformer_s{block_index}")(
-                current_feat, pos_src, query_tokens
+            att_tokens, current_feat = getattr(self, f"DMAB_s{block_index}")(
+                query_tokens,
+                current_feat,
+                pos_src,
             )
-            current_feat = current_feat.transpose(1, 2).view(b, c, h, w)
 
-            current_feat = previous_feat = getattr(
-                self, f"output_upscaling_s{block_index}"
-            )(current_feat)
+            current_feat = previous_feat = getattr(self, f"SUB_s{block_index}")(
+                current_feat
+            )
             query_tokens = torch.stack(
                 [
-                    getattr(self, f"output_hypernetworks_mlps_s{block_index}")[i](
-                        att_tokens[:, i, :]
-                    )
+                    getattr(self, f"MLP_s{block_index}")[i](att_tokens[:, i, :])
                     for i in range(self.num_mask_tokens)
                 ],
                 dim=1,

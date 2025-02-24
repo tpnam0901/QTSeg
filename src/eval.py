@@ -6,7 +6,7 @@ import logging
 
 from time import time_ns
 from tqdm.auto import tqdm
-from data.dataloader import build_dataloader
+from data.dataloader import build_test_dataloader, build_dataloader
 from configs.base import Config
 from networks import models, metrics
 from fvcore.nn import FlopCountAnalysis, ActivationCountAnalysis
@@ -18,15 +18,19 @@ logging.basicConfig(
 )
 
 
-def main(cfg: Config, ckpt: str = None):
+def main(cfg: Config, ckpt: str = "", ori_res: bool = False):
+    # Change the batch size to 1
     cfg.num_workers = 0
+    cfg.batch_size = 1
+
     weight_paths = glob.glob(os.path.join(cfg.checkpoint_dir, "*.pt"))
-    if ckpt is not None:
+    if ckpt:
         weight_paths = [ckpt]
     # Build dataloader
     logging.info("Building dataset...")
 
-    test_dataloader = build_dataloader(
+    dataloader_fn = build_test_dataloader if ori_res else build_dataloader
+    test_dataloader = dataloader_fn(
         cfg,
         mode=cfg.valid_type,
         logger=logging.getLogger("Eval"),
@@ -45,7 +49,7 @@ def main(cfg: Config, ckpt: str = None):
     model.eval()
     metric.reset()
 
-    inputs = torch.randn(1, cfg.image_channel, *cfg.image_size).to(device)
+    inputs = torch.randn(1, cfg.image_channel, cfg.img_size, cfg.img_size).to(device)
     flops = FlopCountAnalysis(model, (inputs,)).total()
     acts = ActivationCountAnalysis(model, (inputs,)).total()
     total_flops = (flops + acts) / 1e9
@@ -121,6 +125,11 @@ def arg_parser():
         help="Whether to change the metric",
     )
     parser.add_argument(
+        "--ori_res",
+        action="store_true",
+        help="Whether to evaluate the original resolution",
+    )
+    parser.add_argument(
         "--ckpt",
         type=str,
         default=None,
@@ -138,4 +147,4 @@ if __name__ == "__main__":
 
     if args.valid_type:
         cfg.valid_type = args.valid_type
-    main(cfg, args.ckpt)
+    main(cfg, args.ckpt, args.ori_res)
