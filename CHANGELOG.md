@@ -1,5 +1,55 @@
 # Changelog
 
+## [0.2.0](https://github.com/tpnam0901/QTSeg/compare/v0.1.0...v0.2.0) (2025-02-24)
+
+
+### Features
+
+* add acdc, fives fold split ([b7cf29a](https://github.com/tpnam0901/QTSeg/commit/b7cf29a554a38ef12811fbfd7908ffda48d54bae))
+* add dsb, kvasir preproccess ([bd345bf](https://github.com/tpnam0901/QTSeg/commit/bd345bfbf83723e8f2dc55ac6a1079871e6df355))
+* add DSB2018, KvasirSEG dataset ([863abea](https://github.com/tpnam0901/QTSeg/commit/863abea32e91dee784455da4affa768b5db485d2))
+* add evaluation at original size ([917a5ae](https://github.com/tpnam0901/QTSeg/commit/917a5ae965a0cddb5a6c7230cabbf09965633e56))
+* add FIVES dataset, fix batch size for evaluation ([819f38f](https://github.com/tpnam0901/QTSeg/commit/819f38f3524b5c8a4996e455f67667e541fbf781))
+* add PolyLR schedulers ([d9e9eb0](https://github.com/tpnam0901/QTSeg/commit/d9e9eb097ebd9e689b4f77889ea06c41a533c0eb))
+* add pretrained evaluation to colab link ([d00df0b](https://github.com/tpnam0901/QTSeg/commit/d00df0b9d942aa234f675c7278b74c4ee78eee3e))
+* add test dataset ([b44077a](https://github.com/tpnam0901/QTSeg/commit/b44077a058c9eb4b0d85ebeec91ad201537919d2))
+* apply min-max normalization ([e662699](https://github.com/tpnam0901/QTSeg/commit/e66269969e6f23281ff79b0b9425e3af98baf23e))
+* change preprocessing image ([3890228](https://github.com/tpnam0901/QTSeg/commit/38902288c894e817bfec5bf60b41e84408bd1332))
+* **configs:** change defaul config ([4a6c3b4](https://github.com/tpnam0901/QTSeg/commit/4a6c3b4f687051efee136785eed81d469d3cbbad))
+* **eval:** add evaluation at resize ([41fd7cb](https://github.com/tpnam0901/QTSeg/commit/41fd7cb3d534d9036fa67889e8404c9b31483ef1))
+* **SEED:** add dynamic seed ([bd92abd](https://github.com/tpnam0901/QTSeg/commit/bd92abd33dcbcbf94059a2b901c13796392f7d0c))
+
+
+### Bug Fixes
+
+* **dataset:** augmentation dataset ([da0f43b](https://github.com/tpnam0901/QTSeg/commit/da0f43b75859adeee31c3ed9dd0ba241368e690c))
+* **dataset:** convert 3c label to 1c label ([09f71b7](https://github.com/tpnam0901/QTSeg/commit/09f71b7d4afd2232380a84aa5c205636bdd129cd))
+* **dataset:** dataset by pass augmentation ([cde55eb](https://github.com/tpnam0901/QTSeg/commit/cde55eb04c5b745158eb514b15bbe4dd01fd08c8))
+* **dataset:** pad image ([ddea7f9](https://github.com/tpnam0901/QTSeg/commit/ddea7f945d984431256f1efebe28c57b1b6f81e2))
+* **dataset:** pad image DSB2018 ([58ec66e](https://github.com/tpnam0901/QTSeg/commit/58ec66e9bf3e2db75b82ee30dc8e7465241279c9))
+* **dataset:** wrong params init ([accca62](https://github.com/tpnam0901/QTSeg/commit/accca62c224f8908d68afb830cf0711fae4529c0))
+* **decoder:** remove unused code ([513c6de](https://github.com/tpnam0901/QTSeg/commit/513c6de282f2acc65a3fbb90012188ed68aee6b4))
+* function not found ([bcfeebf](https://github.com/tpnam0901/QTSeg/commit/bcfeebfc397a73e9e9658e2b469b38e840b830cc))
+* **infer:** 4 channels image ([395ab77](https://github.com/tpnam0901/QTSeg/commit/395ab7722f9e6c5d9fc4466617e2cd57c28b4587))
+* **infer:** 4 channels image ([cef3436](https://github.com/tpnam0901/QTSeg/commit/cef3436e54c22eb92aa52ef63003d533e5fde3e8))
+* **infer:** checkpoint is none in infer ([097ece0](https://github.com/tpnam0901/QTSeg/commit/097ece0b19f6a4193fdf09ef4b9a058e0476e9bb))
+* **infer:** crop image and return original image ([0de1a6c](https://github.com/tpnam0901/QTSeg/commit/0de1a6cd693b23e5c20ee3dfce3a25daeee3c74d))
+* **metrics:** can not calculate original size ([197d85a](https://github.com/tpnam0901/QTSeg/commit/197d85a28b71ac45672b488857c589e771364c7f))
+* **MLFD:** rename model from MLFF to MLFD ([60635af](https://github.com/tpnam0901/QTSeg/commit/60635af95b999bcfec3eded8c94ca9c74ba086af))
+* **SEED:** out of range ([042761b](https://github.com/tpnam0901/QTSeg/commit/042761b055cace44c758c7593ffc9297d13fc4b9))
+* update sklearn from 1.3.2 -&gt; 1.5.0 ([bfb28af](https://github.com/tpnam0901/QTSeg/commit/bfb28af07cf9fb05524752cfbec9bcfc655c0f78))
+
+
+### Documentation
+
+* add pretrained ([e4cb92c](https://github.com/tpnam0901/QTSeg/commit/e4cb92c3e6f3307ccf44611b108ab116475c4787))
+* fix pretrained link, release link ([446314b](https://github.com/tpnam0901/QTSeg/commit/446314b6ac42ef2c580bd48106b62cbb9ec069a0))
+* fix release page link ([635ad8e](https://github.com/tpnam0901/QTSeg/commit/635ad8ed4ccc13e269df9fc4c3e799537addbc29))
+* reduce image size of DMAD ([78d99d6](https://github.com/tpnam0901/QTSeg/commit/78d99d64e44535c642994f1e88e58e9bc414ca88))
+* reduce image size of DMAD ([955c721](https://github.com/tpnam0901/QTSeg/commit/955c7218a999a141612e7771ec82d8f2bcff0849))
+* update architecture overall ([7a0b3c8](https://github.com/tpnam0901/QTSeg/commit/7a0b3c86f76c1f07f9595ecf3f63b8bac1003519))
+* update architecture overall, add fives, dsb2018 dataset, update viz ([da3e6c1](https://github.com/tpnam0901/QTSeg/commit/da3e6c1221aa4157129978d4a841d3ebd494cdfb))
+
 ## 0.1.0 (2024-12-24)
 
 
